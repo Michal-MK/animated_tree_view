@@ -104,6 +104,7 @@ class Indent extends StatelessWidget {
       foregroundPainter: _IndentationPainter(
         indentation: indentation,
         node: node,
+        isLastChild: node.isLastChild,
         minLevelToIndent: minLevelToIndent,
       ),
       child: content,
@@ -114,11 +115,13 @@ class Indent extends StatelessWidget {
 class _IndentationPainter extends CustomPainter {
   final Indentation indentation;
   final ITreeNode node;
+  final bool isLastChild;
   final int minLevelToIndent;
 
   const _IndentationPainter({
     required this.indentation,
     required this.node,
+    required this.isLastChild,
     required this.minLevelToIndent,
   });
 
@@ -216,7 +219,7 @@ class _IndentationPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_IndentationPainter oldDelegate) {
-    return indentation != oldDelegate.indentation || node != oldDelegate.node;
+    return indentation != oldDelegate.indentation || node != oldDelegate.node || isLastChild != oldDelegate.isLastChild;
   }
 
   void _drawWithRoundedCorners({

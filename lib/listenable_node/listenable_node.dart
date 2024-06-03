@@ -84,6 +84,8 @@ class ListenableNode extends Node
   /// on this operation
   void add(Node value) {
     super.add(value);
+    fixLastChild();    
+
     _notifyListeners();
     _notifyNodesAdded(NodeAddEvent(List.from([value])));
   }
@@ -94,6 +96,8 @@ class ListenableNode extends Node
   /// on this operation
   void addAll(Iterable<Node> iterable) {
     super.addAll(iterable);
+    fixLastChild(); 
+
     _notifyListeners();
     _notifyNodesAdded(NodeAddEvent(List.from(iterable)));
   }
@@ -104,6 +108,8 @@ class ListenableNode extends Node
   /// on this operation
   void remove(Node value) {
     super.remove(value);
+    fixLastChild();    
+
     _notifyListeners();
     _notifyNodesRemoved(NodeRemoveEvent(List.from([value])));
   }
@@ -115,6 +121,8 @@ class ListenableNode extends Node
   void delete() {
     final nodeToRemove = this;
     super.delete();
+    fixLastChild();    
+
     _notifyListeners();
     _notifyNodesRemoved(NodeRemoveEvent(List.from([nodeToRemove])));
   }
@@ -125,6 +133,8 @@ class ListenableNode extends Node
   /// on this operation
   void removeAll(Iterable<Node> iterable) {
     super.removeAll(iterable);
+    fixLastChild();    
+
     _notifyListeners();
     _notifyNodesRemoved(NodeRemoveEvent(List.from(iterable)));
   }
@@ -137,6 +147,8 @@ class ListenableNode extends Node
   void removeWhere(bool test(Node element)) {
     final allChildren = childrenAsList.toSet();
     super.removeWhere(test);
+    fixLastChild();    
+
     _notifyListeners();
     final remainingChildren = childrenAsList.toSet();
     allChildren.removeAll(remainingChildren);
@@ -194,6 +206,14 @@ class ListenableNode extends Node
 
   /// Overloaded operator for [elementAt]
   ListenableNode operator [](String path) => elementAt(path);
+
+  void fixLastChild() {
+    for (var i = 0; i < childrenAsList.length; i++) {
+      if (childrenAsList[i] is TreeNode) {
+        (childrenAsList[i] as TreeNode).isLastChild = i == childrenAsList.length - 1;
+      }
+    }
+  }
 
   /// Disposer to clear the listeners and [StreamSubscription]s
   void dispose() {
