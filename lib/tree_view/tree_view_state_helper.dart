@@ -75,7 +75,7 @@ class TreeViewStateHelper<Data> {
           // if the node is expanded, add the items in the flatList and
           // the animatedList
           animatedListStateController.insertAll(
-              parentIndex + parentNode.childrenAsList.length,
+              parentIndex + _countChildNodes(parentNode),
               List.from(event.items));
         }
         if (focusToNewNode) {
@@ -83,6 +83,19 @@ class TreeViewStateHelper<Data> {
         }
       }
     }
+  }
+
+  int _countChildNodes(ITreeNode<Data> node) {
+    return node.childrenAsList.fold<int>(
+      0, (previousValue, element) {
+        if (element is ITreeNode<Data>) {
+          if (element.isExpanded) {
+            return previousValue + 1 + _countChildNodes(element);
+          }
+        }
+        return previousValue + 1;
+      },
+    );
   }
 
   @visibleForTesting
